@@ -28,45 +28,37 @@ namespace mr_steve {
             this.dataGridView1.Columns.Add("status", "Status");
             this.dataGridView1.Columns.Add("posx", "Mouse X");
             this.dataGridView1.Columns.Add("posy", "Mouse Y");
+            string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
 
-            MouseHook.MouseAction += MouseHook_MouseAction;
+            HIDHook.MouseAction += MouseHook_MouseAction;
+            HIDHook.KeyboardAction += HIDHook_KeyboardAction;
+        }
 
+        private void HIDHook_KeyboardAction(object sender, KeyboardEventArgs e) {
+            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.Status, e.Key,string.Empty);
+            dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void MouseHook_MouseAction(object sender, MouseEventArgs e) {
-            //   throw new NotImplementedException();
-
-
             this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.MouseStatus, e.MousePosX.ToString(), e.MousePosY.ToString());
-        }
-
-
-
-        private void Event(object sender, EventArgs e) {
-
-
-
-            Console.WriteLine("Left mouse click!");
-
-
-
-            //  this.dataGridView1.Rows.Add(mouse.X, mouse.Y);
+            dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void Button1_Click(object sender, EventArgs e) {
-
             if (((Button)sender).Text == "Record") {
                 this.Text = "Stop";
-                MouseHook.Start();
+                HIDHook.Start();
                 
             } else if (this.Text == "Stop") {
                 this.Text = "Record";
-                MouseHook.stop();
+                HIDHook.stop();
             }
         }
+        private void Button2_Click(object sender, EventArgs e) {
+
+        }
     }
-     
 }
 
 

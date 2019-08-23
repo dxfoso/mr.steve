@@ -49,12 +49,13 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(42, 343);
+            this.button2.Location = new System.Drawing.Point(31, 109);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(222, 51);
+            this.button2.Size = new System.Drawing.Size(233, 51);
             this.button2.TabIndex = 4;
             this.button2.Text = "Save";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // Form1
             // 
