@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 namespace mr_steve {
     public partial class Form1 : Form {
-        string documentPath; 
+        string documentPath;
         Mutex checking = new Mutex(false);
         AutoResetEvent are = new AutoResetEvent(false);
 
@@ -27,7 +27,6 @@ namespace mr_steve {
 
             this.dataGridView1.Columns.Add("#", "#");
             this.dataGridView1.Columns.Add("status", "Status");
-
             this.dataGridView1.Columns.Add("posx", "Mouse X/Keyb");
             this.dataGridView1.Columns.Add("posy", "Mouse Y");
             this.dataGridView1.Columns.Add("time", "Time ( ms )");
@@ -70,11 +69,64 @@ namespace mr_steve {
 
         }
         private void Button2_Click(object sender, EventArgs e) {
-            Interaction.InputBox("Please Enter File name", "File Name", "");
+            var filepath = Interaction.InputBox("Please Enter File name", "File Name", "");
+
+            if (string.IsNullOrEmpty(textBox5.Text)) {
+                MessageBox.Show("please enter file name ");
+                return;
+            }
+
+
+            settings res = new settings();
+            res.Launch = new Launch();
+            //sleep 
+            res.Launch.Sleep = new LaunchSleep();
+            res.Launch.Sleep.Enable = checkBox2.Checked;
+            res.Launch.Sleep.Minutes = (int)numericUpDown1.Value;
+            //time
+            res.Launch.Timing = new LaunchTiming();
+            res.Launch.Timing.Enable = checkBox1.Checked;
+            res.Launch.Timing.Hour = (int)numericUpDown4.Value;
+            res.Launch.Timing.Minute = (int)numericUpDown3.Value;
+            res.Launch.Timing.Second = (int)numericUpDown2.Value;
+            //http 
+            res.httpGet = new httpGET();
+            res.httpGet.Enable = checkBox3.Checked;
+            res.httpGet.URL = textBox1.Text;
+            res.httpGet.Operator = (ComparisonOperator)comboBox1.SelectedIndex;
+            res.httpGet.value = textBox2.Text;
+            //proccess 
+            res.Proccess = new Proccess();
+            res.Proccess.Close = textBox4.Text;
+
+            //HID 
+            res.HID = new List<HID>();
+            for (int i = 1; i < dataGridView1.Rows.Count-1; i++) {
+                string posy =(string) dataGridView1.Rows[i].Cells["posy"].Value ;
+                HID temp = null ; 
+                if (string.IsNullOrEmpty(posy)) {//keyboard
+                    Key k = new Key();
+                    k.KeyValue =(Keys) dataGridView1.Rows[i].Cells["posx"].Value; 
+                    k.Status = (KeyStatus) dataGridView1.Rows[i].Cells["status"].Value;
+                    temp = k;
+                } else {//mouse 
+                    Mouse m = new Mouse();
+                    m.PosX = int.Parse((string)dataGridView1.Rows[i].Cells["posx"].Value);
+                    m.PosY = int.Parse((string)dataGridView1.Rows[i].Cells["posy"].Value);
+                    m.Status  = (MouseStatus)dataGridView1.Rows[i].Cells["status"].Value;
+                    temp = m;
+                }
+                temp.Time = (long)dataGridView1.Rows[i].Cells["time"].Value;
+                res.HID.Add(temp);
+            }
+
+
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            documentPath =  Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents", "Mr_Steve" );
+            documentPath = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents", "Mr_Steve");
 
 
             textBox3.Text = documentPath;
