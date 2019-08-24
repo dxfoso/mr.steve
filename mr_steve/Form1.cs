@@ -26,8 +26,9 @@ namespace mr_steve {
 
             this.dataGridView1.Columns.Add("#", "#");
             this.dataGridView1.Columns.Add("status", "Status");
-            this.dataGridView1.Columns.Add("posx", "Mouse X");
+            this.dataGridView1.Columns.Add("posx", "Mouse X/Key");
             this.dataGridView1.Columns.Add("posy", "Mouse Y");
+            this.dataGridView1.Columns.Add("time", "Time ( ms )");
             string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
 
@@ -36,12 +37,12 @@ namespace mr_steve {
         }
 
         private void HIDHook_KeyboardAction(object sender, KeyboardEventArgs e) {
-            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.Status, e.Key,string.Empty);
+            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.Status, e.Key,string.Empty , e.Time);
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void MouseHook_MouseAction(object sender, MouseEventArgs e) {
-            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.MouseStatus, e.MousePosX.ToString(), e.MousePosY.ToString());
+            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.MouseStatus, e.MousePosX.ToString(), e.MousePosY.ToString() , e.Time );
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 

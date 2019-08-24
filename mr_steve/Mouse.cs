@@ -24,30 +24,34 @@ namespace mr_steve {
         WM_KEYUP = 0x0101
     }
     public class MouseEventArgs : EventArgs {
-        public MouseEventArgs(MouseStatus mouseStatus, int xPos, int yPos) {
+        public MouseEventArgs(MouseStatus mouseStatus, int xPos, int yPos, long time) {
             MouseStatus = mouseStatus;
             MousePosX = xPos;
             MousePosY = yPos;
+            Time = time;
         }
         public MouseStatus MouseStatus { get; set; }
         public int MousePosX { get; set; }
         public int MousePosY { get; set; }
+        public long Time { get; set; }
     }
 
     public class KeyboardEventArgs : EventArgs {
-        public KeyboardEventArgs(Keys key, KeyStatus status) {
+        public KeyboardEventArgs(Keys key, KeyStatus status, long time) {
             Key = key;
             Status = status;
+            Time = time;
         }
         public Keys Key { get; set; }
         public KeyStatus Status { get; set; }
+        public long Time { get; set; }
     }
 
     public static class HIDHook {
         //public static event EventHandler MouseAction = delegate { };
         private const int WH_MOUSE_LL = 14;
         private const int WH_KEYBOARD_LL = 13;
-
+        private static Stopwatch stopWatch = new Stopwatch();
         //mouse
         public delegate void MouseStatusHandler(object sender, MouseEventArgs e);
         public static event MouseStatusHandler MouseAction = delegate { };
@@ -58,10 +62,13 @@ namespace mr_steve {
         public static void Start() {
             _hookID_Mouse = SetHook(WH_MOUSE_LL, _proc_mouse);
             _hookID_Keyboard = SetHook(WH_KEYBOARD_LL, _proc_keyboard);
+            stopWatch.Start();
+
         }
         public static void stop() {
             UnhookWindowsHookEx(_hookID_Mouse);
             UnhookWindowsHookEx(_hookID_Keyboard);
+            stopWatch.Stop();
         }
 
         private static LowLevelProc _proc_mouse = HookCallback_Mouse;
@@ -88,7 +95,7 @@ namespace mr_steve {
                 (MouseStatus)wParam == MouseStatus.WM_RBUTTONUP)) {
                 MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
                 Point mouse = System.Windows.Forms.Cursor.Position;
-                MouseAction(null, new MouseEventArgs((MouseStatus)wParam, mouse.X, mouse.Y));
+                MouseAction(null, new MouseEventArgs((MouseStatus)wParam, mouse.X, mouse.Y, stopWatch.ElapsedMilliseconds));
             }
             return CallNextHookEx(_hookID_Mouse, nCode, wParam, lParam);
         }
@@ -97,7 +104,7 @@ namespace mr_steve {
             if (nCode >= 0) {
                 int vkCode = Marshal.ReadInt32(lParam);
                 Console.WriteLine((Keys)vkCode);
-                KeyboardAction(null, new KeyboardEventArgs((Keys)vkCode, (KeyStatus)wParam));
+                KeyboardAction(null, new KeyboardEventArgs((Keys)vkCode, (KeyStatus)wParam, stopWatch.ElapsedMilliseconds));
             }
             return CallNextHookEx(_hookID_Keyboard, nCode, wParam, lParam);
         }
