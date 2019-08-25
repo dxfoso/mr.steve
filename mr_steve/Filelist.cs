@@ -36,7 +36,7 @@ namespace mr_steve {
         }
 
         private void ListBox1_SelectedIndexChanged(object sender, EventArgs e) {
-
+          
         }
 
         private void Button1_Click(object sender, EventArgs e) {
@@ -45,6 +45,11 @@ namespace mr_steve {
         }
 
         private void Button2_Click(object sender, EventArgs e) {
+            this.Close();
+        }
+
+        private void ListBox1_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e) {
+            fileName = (string)listBox1.SelectedItem;
             this.Close();
         }
     }

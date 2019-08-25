@@ -179,7 +179,10 @@ namespace mr_steve {
 
             //HID 
             res.HID = new List<HID>();
-            for (int i = 1; i < dataGridView1.Rows.Count - 1; i++) {
+            for (int i = 0; i < dataGridView1.Rows.Count; i++) {
+
+                if (dataGridView1.Rows[i].Cells["posx"].Value == null) continue;
+
                 string posy = (string)dataGridView1.Rows[i].Cells["posy"].Value;
                 HID temp = null;
                 if (string.IsNullOrEmpty(posy)) {//keyboard
