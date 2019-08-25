@@ -20,15 +20,28 @@ using System.Windows.Forms;
     }
  
     public class MouseEventArgs : EventArgs {
-        public MouseEventArgs(MouseStatus mouseStatus, int xPos, int yPos, long time) {
-            MouseStatus = mouseStatus;
-            MousePosX = xPos;
-            MousePosY = yPos;
-            Time = time;
+        public MouseEventArgs(HIDMouseInput input ) {
+        MouseInput = input;
         }
-        public MouseStatus MouseStatus { get; set; }
-        public int MousePosX { get; set; }
-        public int MousePosY { get; set; }
-        public long Time { get; set; }
-    }
+        public HIDMouseInput MouseInput { get; set; }
  
+    }
+
+
+public class HIDMouseInput : HIDInput {
+
+    public HIDMouseInput() { }
+
+    public HIDMouseInput(MouseStatus mouseStatus, int xPos, int yPos, long time){
+        Status = mouseStatus;
+        PosX = xPos;
+        PosY = yPos;
+        Time = time;
+
+    }
+
+    public MouseStatus Status { get; set; }
+    public int PosX { get; set; }
+    public int PosY { get; set; }
+
+}

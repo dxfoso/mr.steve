@@ -27,14 +27,14 @@ namespace mr_steve {
             myDataCol.HeaderText = "My New Column";
             myDataCol.MappingName = "Current";
 
-           
+
             string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             dataGridInit();
             HID.MouseAction += MouseHook_MouseAction;
             HID.KeyboardAction += HIDHook_KeyboardAction;
         }
-        private void  dataGridInit() {
+        private void dataGridInit() {
 
             this.dataGridView1.Columns.Add("#", "#");
             this.dataGridView1.Columns.Add("status", "Status");
@@ -46,7 +46,8 @@ namespace mr_steve {
 
         }
         private void HIDHook_KeyboardAction(object sender, KeyboardEventArgs e) {
-            if (e.Key == Keys.Escape) {
+            var E = e.KeyInput;
+            if (E.Key == Keys.Escape) {
 
                 HID.stop();
 
@@ -54,12 +55,15 @@ namespace mr_steve {
                 return;
             }
 
-            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.Status, e.Key, string.Empty, e.Time);
+            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, E.Status, E.Key, string.Empty, E.Time);
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void MouseHook_MouseAction(object sender, MouseEventArgs e) {
-            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, e.MouseStatus, e.MousePosX.ToString(), e.MousePosY.ToString(), e.Time);
+
+            var E = e.MouseInput;
+
+            this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, E.Status, E.PosX.ToString(), E.PosY.ToString(), E.Time);
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
@@ -109,26 +113,26 @@ namespace mr_steve {
 
         }
 
-        public  void  settings_to_UI(settings res) {
- 
+        public void settings_to_UI(settings res) {
+
             //sleep 
 
-           checkBox2.Checked = res.Launch.Sleep.Enable;
-         numericUpDown1.Value = res.Launch.Sleep.Minutes ;
+            checkBox2.Checked = res.Launch.Sleep.Enable;
+            numericUpDown1.Value = res.Launch.Sleep.Minutes;
             //time
 
-          checkBox1.Checked = res.Launch.Timing.Enable ;
-           numericUpDown4.Value = res.Launch.Timing.Hour ;
-           numericUpDown3.Value = res.Launch.Timing.Minute ;
-          numericUpDown2.Value = res.Launch.Timing.Second ;
+            checkBox1.Checked = res.Launch.Timing.Enable;
+            numericUpDown4.Value = res.Launch.Timing.Hour;
+            numericUpDown3.Value = res.Launch.Timing.Minute;
+            numericUpDown2.Value = res.Launch.Timing.Second;
             //http 
 
-          checkBox3.Checked = res.httpGet.Enable ;
-            textBox1.Text = res.httpGet.URL ;
-           comboBox1.SelectedIndex =(int)  res.httpGet.Operator ;
-             textBox2.Text = res.httpGet.value ;
+            checkBox3.Checked = res.httpGet.Enable;
+            textBox1.Text = res.httpGet.URL;
+            comboBox1.SelectedIndex = (int)res.httpGet.Operator;
+            textBox2.Text = res.httpGet.value;
             //proccess 
-           textBox4.Text = res.Proccess.Close ;
+            textBox4.Text = res.Proccess.Close;
 
 
 
@@ -139,19 +143,19 @@ namespace mr_steve {
             for (int i = 0; i < res.HID.Count; i++) {
 
 
-                if (res.HID[i].GetType() == typeof(Mouse)) {
-                    Mouse m = (Mouse)res.HID[i];
+                if (res.HID[i].GetType() == typeof(HIDMouseInput)) {
+                    HIDMouseInput m = (HIDMouseInput)res.HID[i];
                     this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, m.Status, m.PosX.ToString(), m.PosY.ToString(), m.Time);
-                   
-                } else if (res.HID[i].GetType() == typeof(Key)) {
-                    Key k = (Key)res.HID[i];
-                    this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, k.Status, k.KeyValue, string.Empty, k.Time);
+
+                } else if (res.HID[i].GetType() == typeof(HIDKeyInput)) {
+                    HIDKeyInput k = (HIDKeyInput)res.HID[i];
+                    this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, k.Status, k.Key, string.Empty, k.Time);
                 }
-          
+
             }
 
 
-          
+
         }
 
 
@@ -188,12 +192,12 @@ namespace mr_steve {
                 string posy = (string)dataGridView1.Rows[i].Cells["posy"].Value;
                 HIDInput temp = null;
                 if (string.IsNullOrEmpty(posy)) {//keyboard
-                    Key k = new Key();
-                    k.KeyValue = (Keys)dataGridView1.Rows[i].Cells["posx"].Value;
+                    HIDKeyInput k = new HIDKeyInput();
+                    k.Key = (Keys)dataGridView1.Rows[i].Cells["posx"].Value;
                     k.Status = (KeyStatus)dataGridView1.Rows[i].Cells["status"].Value;
                     temp = k;
                 } else {//mouse 
-                    Mouse m = new Mouse();
+                    HIDMouseInput m = new HIDMouseInput();
                     m.PosX = int.Parse((string)dataGridView1.Rows[i].Cells["posx"].Value);
                     m.PosY = int.Parse((string)dataGridView1.Rows[i].Cells["posy"].Value);
                     m.Status = (MouseStatus)dataGridView1.Rows[i].Cells["status"].Value;
@@ -208,7 +212,7 @@ namespace mr_steve {
 
 
 
-        public static  string getFolder() {
+        public static string getFolder() {
             string res = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents", "Mr_Steve");
             if (!File.Exists(res))
                 System.IO.Directory.CreateDirectory(res);
@@ -222,7 +226,7 @@ namespace mr_steve {
         }
 
         private void Button5_Click(object sender, EventArgs e) {
-          
+
             Process.Start(getFolder());
         }
 
@@ -235,7 +239,7 @@ namespace mr_steve {
             //   f.ShowDialog();
             f.ShowDialog();
             if (string.IsNullOrEmpty(f.fileName)) return;
-            string res = Path.Combine(getFolder() , f.fileName );
+            string res = Path.Combine(getFolder(), f.fileName);
             settings s = settings.load(res);
             this.settings_to_UI(s);
         }
@@ -251,7 +255,7 @@ namespace mr_steve {
 
 
 
-           
+
 
             keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 0, 0); // V Down
             keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 2, 0); // V Up

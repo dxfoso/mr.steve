@@ -48,27 +48,9 @@ public class settings {
 
 
 
-public abstract class HIDInput {
-
-    public HIDInput() {
-
-    }
-    public long Time { get; set; }
-}
 
 
-public class Mouse : HIDInput {
-    public MouseStatus Status { get; set; }
-    public int PosX { get; set; }
-    public int PosY { get; set; }
 
-}
-
-public class Key : HIDInput {
-    public Keys KeyValue { get; set; }
-    public KeyStatus Status { get; set; }
-
-}
 
 
 public class Proccess {
@@ -120,7 +102,7 @@ public class HIDConverter : JsonConverter<HIDInput> {
         // base.WriteJson(writer, value, serializer);
 
   //      if (value.GetType() == typeof(Mouse))
-            serializer.Serialize(writer, (Mouse)value);
+            serializer.Serialize(writer, (HIDMouseInput)value);
 
 
     //    else if (value.GetType() == typeof(Key))
@@ -138,12 +120,12 @@ public class HIDConverter : JsonConverter<HIDInput> {
 
 
         if (string.IsNullOrEmpty(getValue(jObject, "PosX"))) {//key
-            Key temp = new Key();
-            temp.KeyValue = (Keys)int.Parse(getValue(jObject, "KeyValue"));
+            HIDKeyInput temp = new HIDKeyInput();
+            temp.Key = (Keys)int.Parse(getValue(jObject, "Key"));
             temp.Status = (KeyStatus)int.Parse(getValue(jObject, "Status"));
             res = temp;
         } else {//mouse 
-            Mouse temp = new Mouse();
+            HIDMouseInput temp = new HIDMouseInput();
             temp.PosX = int.Parse(getValue(jObject, "PosX"));
             temp.PosY = int.Parse(getValue(jObject, "PosY"));
             temp.Status = (MouseStatus)int.Parse(getValue(jObject, "Status"));
