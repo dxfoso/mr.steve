@@ -5,14 +5,24 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
 
 public abstract class HIDInput {
-    public HIDInput() {    }
-    public long Time { get; set; }
+    public HIDInput() { }
+    public int  Time { get; set; }
+
+    public void Play() {
+
+        Thread.Sleep( Time);
+        _play();
+
+    }
+
+    public abstract void _play();
 }
 
 
@@ -54,6 +64,8 @@ public static class HID {
         }
     }
 
+
+
     private delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
 
     private static IntPtr HookCallback_Mouse(int nCode, IntPtr wParam, IntPtr lParam) {
@@ -64,8 +76,10 @@ public static class HID {
             (MouseStatus)wParam == MouseStatus.WM_RBUTTONUP)) {
             MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
             Point mouse = System.Windows.Forms.Cursor.Position;
-            MouseAction(null, new MouseEventArgs( new HIDMouseInput( (MouseStatus)wParam, mouse.X, mouse.Y, stopWatch.ElapsedMilliseconds)));
+            MouseAction(null, new MouseEventArgs(new HIDMouseInput((MouseStatus)wParam, mouse.X, mouse.Y,(int) stopWatch.ElapsedMilliseconds)));
+            stopWatch.Restart();
         }
+
         return CallNextHookEx(_hookID_Mouse, nCode, wParam, lParam);
     }
 
@@ -73,8 +87,10 @@ public static class HID {
         if (nCode >= 0) {
             int vkCode = Marshal.ReadInt32(lParam);
             Console.WriteLine((Keys)vkCode);
-            KeyboardAction(null, new KeyboardEventArgs( new HIDKeyInput( (Keys)vkCode, (KeyStatus)wParam, stopWatch.ElapsedMilliseconds)));
+            KeyboardAction(null, new KeyboardEventArgs(new HIDKeyInput((Keys)vkCode, (KeyStatus)wParam,(int) stopWatch.ElapsedMilliseconds)));
+            stopWatch.Restart();
         }
+
         return CallNextHookEx(_hookID_Keyboard, nCode, wParam, lParam);
     }
 

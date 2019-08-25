@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -37,25 +38,34 @@ public class settings {
     public List<HIDInput> HID { get; set; }
 
     public static void save(settings s, string filePath) {
-        string json = JsonConvert.SerializeObject(s );
+        string json = JsonConvert.SerializeObject(s);
         //write string to file
         System.IO.File.WriteAllText(filePath, json);
     }
     public static settings load(string filePath) {
-        return JsonConvert.DeserializeObject<settings>(File.ReadAllText(filePath), new HIDConverter() );
+        return JsonConvert.DeserializeObject<settings>(File.ReadAllText(filePath), new HIDConverter());
+    }
+
+    public void play() {
+
+
+        if (!string.IsNullOrEmpty(Proccess.Close) && Proccess .isClose ) {
+               try {
+            Process[] proc = Process.GetProcessesByName(Proccess.Close);
+            proc[0].Kill();
+             } catch {
+            }
+
+        }
+
+        foreach (HIDInput i in HID)
+            i.Play();
     }
 }
 
-
-
-
-
-
-
-
 public class Proccess {
 
-
+    public bool isClose { get; set; }
     public string Close { get; set; }
 }
 
@@ -101,12 +111,12 @@ public class HIDConverter : JsonConverter<HIDInput> {
     public override void WriteJson(JsonWriter writer, HIDInput value, JsonSerializer serializer) {
         // base.WriteJson(writer, value, serializer);
 
-  //      if (value.GetType() == typeof(Mouse))
-            serializer.Serialize(writer, (HIDMouseInput)value);
+        //      if (value.GetType() == typeof(Mouse))
+        serializer.Serialize(writer, (HIDMouseInput)value);
 
 
-    //    else if (value.GetType() == typeof(Key))
-      //      serializer.Serialize(writer, (Key)value);
+        //    else if (value.GetType() == typeof(Key))
+        //      serializer.Serialize(writer, (Key)value);
 
 
 
@@ -132,10 +142,7 @@ public class HIDConverter : JsonConverter<HIDInput> {
             res = temp;
         }
 
-        res.Time = long.Parse(getValue(jObject, "Time"));
-        //,{"KeyValue":32,"Status":257,"Time":1881}]}
-        //"Status":513,"PosX":707,"PosY":408,"Time":3286}
-
+        res.Time = int.Parse(getValue(jObject, "Time"));
         return res;
     }
 

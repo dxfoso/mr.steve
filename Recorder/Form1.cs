@@ -16,10 +16,7 @@ using Microsoft.VisualBasic.Devices;
 
 namespace mr_steve {
     public partial class Form1 : Form {
-        string documentPath;
-        Mutex checking = new Mutex(false);
-        AutoResetEvent are = new AutoResetEvent(false);
-
+         
         public Form1() {
             InitializeComponent();
 
@@ -113,104 +110,7 @@ namespace mr_steve {
 
         }
 
-        public void settings_to_UI(settings res) {
-
-            //sleep 
-
-            checkBox2.Checked = res.Launch.Sleep.Enable;
-            numericUpDown1.Value = res.Launch.Sleep.Minutes;
-            //time
-
-            checkBox1.Checked = res.Launch.Timing.Enable;
-            numericUpDown4.Value = res.Launch.Timing.Hour;
-            numericUpDown3.Value = res.Launch.Timing.Minute;
-            numericUpDown2.Value = res.Launch.Timing.Second;
-            //http 
-
-            checkBox3.Checked = res.httpGet.Enable;
-            textBox1.Text = res.httpGet.URL;
-            comboBox1.SelectedIndex = (int)res.httpGet.Operator;
-            textBox2.Text = res.httpGet.value;
-            //proccess 
-            textBox4.Text = res.Proccess.Close;
-
-
-
-            dataGridView1.Rows.Clear();
-
-
-
-            for (int i = 0; i < res.HID.Count; i++) {
-
-
-                if (res.HID[i].GetType() == typeof(HIDMouseInput)) {
-                    HIDMouseInput m = (HIDMouseInput)res.HID[i];
-                    this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, m.Status, m.PosX.ToString(), m.PosY.ToString(), m.Time);
-
-                } else if (res.HID[i].GetType() == typeof(HIDKeyInput)) {
-                    HIDKeyInput k = (HIDKeyInput)res.HID[i];
-                    this.dataGridView1.Rows.Add(this.dataGridView1.Rows.Count, k.Status, k.Key, string.Empty, k.Time);
-                }
-
-            }
-
-
-
-        }
-
-
-        private settings UI_to_settings() {
-
-            settings res = new settings();
-
-            //sleep 
-
-            res.Launch.Sleep.Enable = checkBox2.Checked;
-            res.Launch.Sleep.Minutes = (int)numericUpDown1.Value;
-            //time
-
-            res.Launch.Timing.Enable = checkBox1.Checked;
-            res.Launch.Timing.Hour = (int)numericUpDown4.Value;
-            res.Launch.Timing.Minute = (int)numericUpDown3.Value;
-            res.Launch.Timing.Second = (int)numericUpDown2.Value;
-            //http 
-
-            res.httpGet.Enable = checkBox3.Checked;
-            res.httpGet.URL = textBox1.Text;
-            res.httpGet.Operator = (ComparisonOperator)comboBox1.SelectedIndex;
-            res.httpGet.value = textBox2.Text;
-            //proccess 
-
-            res.Proccess.Close = textBox4.Text;
-
-            //HID 
-            res.HID = new List<HIDInput>();
-            for (int i = 0; i < dataGridView1.Rows.Count; i++) {
-
-                if (dataGridView1.Rows[i].Cells["posx"].Value == null) continue;
-
-                string posy = (string)dataGridView1.Rows[i].Cells["posy"].Value;
-                HIDInput temp = null;
-                if (string.IsNullOrEmpty(posy)) {//keyboard
-                    HIDKeyInput k = new HIDKeyInput();
-                    k.Key = (Keys)dataGridView1.Rows[i].Cells["posx"].Value;
-                    k.Status = (KeyStatus)dataGridView1.Rows[i].Cells["status"].Value;
-                    temp = k;
-                } else {//mouse 
-                    HIDMouseInput m = new HIDMouseInput();
-                    m.PosX = int.Parse((string)dataGridView1.Rows[i].Cells["posx"].Value);
-                    m.PosY = int.Parse((string)dataGridView1.Rows[i].Cells["posy"].Value);
-                    m.Status = (MouseStatus)dataGridView1.Rows[i].Cells["status"].Value;
-                    temp = m;
-                }
-                temp.Time = (long)dataGridView1.Rows[i].Cells["time"].Value;
-                res.HID.Add(temp);
-            }
-            return res;
-
-        }
-
-
+      
 
         public static string getFolder() {
             string res = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents", "Mr_Steve");
@@ -245,37 +145,11 @@ namespace mr_steve {
         }
 
         private void Button6_Click(object sender, EventArgs e) {
-            //var hwnd = new IntPtr(Convert.ToInt32({HexNumber}, 16));
-            //this.WindowState = FormWindowState.Minimized;
-
-            Point cursorPos = Cursor.Position;
-            cursorPos.X = 1200;// control.PointToScreen(coordinate).X;
-            Cursor.Position = cursorPos;
-
-
-
-
-
-
-            keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 0, 0); // V Down
-            keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 2, 0); // V Up
-
-
+            this.WindowState = FormWindowState.Minimized;
+            settings s = UI_to_settings();
+            s.play();
+            this.WindowState = FormWindowState.Normal;
         }
-
-
-
-
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
-        public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
-
-        [DllImport("user32.dll")]
-        static extern short MapVirtualKey(int wCode, int wMapType);
-
-        private const int KEYEVENTF_EXTENDEDKEY = 1;
-        private const int KEYEVENTF_KEYUP = 2;
-
 
     }
 }

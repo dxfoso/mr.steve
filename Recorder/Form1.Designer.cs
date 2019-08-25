@@ -428,7 +428,7 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(110, 27);
             this.button6.TabIndex = 22;
-            this.button6.Text = "Test";
+            this.button6.Text = "Play";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.Button6_Click);
             // 
@@ -436,7 +436,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1227, 608);
+            this.ClientSize = new System.Drawing.Size(1227, 365);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.button4);

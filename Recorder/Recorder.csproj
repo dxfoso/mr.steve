@@ -76,6 +76,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Filelist.resx">
       <DependentUpon>Filelist.cs</DependentUpon>
     </EmbeddedResource>
