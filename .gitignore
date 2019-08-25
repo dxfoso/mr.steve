@@ -6,3 +6,7 @@
 /.vs/mr_steve/v16/Server/sqlite3/storage.ide-shm
 /.vs/mr_steve/v16/Server/sqlite3/storage.ide-wal
 /packages
+/Service/bin
+/Service/obj
+/Recorder/bin
+/Recorder/obj
