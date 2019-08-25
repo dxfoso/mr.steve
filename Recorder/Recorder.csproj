@@ -50,6 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\src\HID\HID.cs">
+      <Link>src\HID\HID.cs</Link>
+    </Compile>
+    <Compile Include="..\src\HID\Keyboard.cs">
+      <Link>src\HID\Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\src\HID\Mouse.cs">
+      <Link>src\HID\Mouse.cs</Link>
+    </Compile>
     <Compile Include="..\src\settings.cs">
       <Link>src\settings.cs</Link>
     </Compile>
@@ -65,7 +74,6 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mouse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Filelist.resx">

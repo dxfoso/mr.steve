@@ -12,6 +12,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.Devices;
+
 namespace mr_steve {
     public partial class Form1 : Form {
         string documentPath;
@@ -29,8 +31,8 @@ namespace mr_steve {
             string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             dataGridInit();
-            HIDHook.MouseAction += MouseHook_MouseAction;
-            HIDHook.KeyboardAction += HIDHook_KeyboardAction;
+            HID.MouseAction += MouseHook_MouseAction;
+            HID.KeyboardAction += HIDHook_KeyboardAction;
         }
         private void  dataGridInit() {
 
@@ -46,7 +48,7 @@ namespace mr_steve {
         private void HIDHook_KeyboardAction(object sender, KeyboardEventArgs e) {
             if (e.Key == Keys.Escape) {
 
-                HIDHook.stop();
+                HID.stop();
 
                 this.WindowState = FormWindowState.Normal;
                 return;
@@ -69,7 +71,7 @@ namespace mr_steve {
 
             this.WindowState = FormWindowState.Minimized;
 
-            HIDHook.Start();
+            HID.Start();
 
 
         }
@@ -178,13 +180,13 @@ namespace mr_steve {
             res.Proccess.Close = textBox4.Text;
 
             //HID 
-            res.HID = new List<HID>();
+            res.HID = new List<HIDInput>();
             for (int i = 0; i < dataGridView1.Rows.Count; i++) {
 
                 if (dataGridView1.Rows[i].Cells["posx"].Value == null) continue;
 
                 string posy = (string)dataGridView1.Rows[i].Cells["posy"].Value;
-                HID temp = null;
+                HIDInput temp = null;
                 if (string.IsNullOrEmpty(posy)) {//keyboard
                     Key k = new Key();
                     k.KeyValue = (Keys)dataGridView1.Rows[i].Cells["posx"].Value;
@@ -237,6 +239,40 @@ namespace mr_steve {
             settings s = settings.load(res);
             this.settings_to_UI(s);
         }
+
+        private void Button6_Click(object sender, EventArgs e) {
+            //var hwnd = new IntPtr(Convert.ToInt32({HexNumber}, 16));
+            //this.WindowState = FormWindowState.Minimized;
+
+            Point cursorPos = Cursor.Position;
+            cursorPos.X = 1200;// control.PointToScreen(coordinate).X;
+            Cursor.Position = cursorPos;
+
+
+
+
+           
+
+            keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 0, 0); // V Down
+            keybd_event((int)Keys.LWin, (byte)MapVirtualKey((int)Keys.V, 0), 2, 0); // V Up
+
+
+        }
+
+
+
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+        public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
+
+        [DllImport("user32.dll")]
+        static extern short MapVirtualKey(int wCode, int wMapType);
+
+        private const int KEYEVENTF_EXTENDEDKEY = 1;
+        private const int KEYEVENTF_KEYUP = 2;
+
+
     }
 }
 

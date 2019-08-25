@@ -8,46 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace mr_steve {
 
-    public enum MouseStatus {
-        WM_LBUTTONDOWN = 0x0201,
-        WM_LBUTTONUP = 0x0202,
-        WM_MOUSEMOVE = 0x0200,
-        WM_MOUSEWHEEL = 0x020A,
-        WM_RBUTTONDOWN = 0x0204,
-        WM_RBUTTONUP = 0x0205
-    }
-
-    public enum KeyStatus {
-        WM_KEYDOWN = 0x0100,
-        WM_KEYUP = 0x0101
-    }
-    public class MouseEventArgs : EventArgs {
-        public MouseEventArgs(MouseStatus mouseStatus, int xPos, int yPos, long time) {
-            MouseStatus = mouseStatus;
-            MousePosX = xPos;
-            MousePosY = yPos;
-            Time = time;
-        }
-        public MouseStatus MouseStatus { get; set; }
-        public int MousePosX { get; set; }
-        public int MousePosY { get; set; }
-        public long Time { get; set; }
-    }
-
-    public class KeyboardEventArgs : EventArgs {
-        public KeyboardEventArgs(Keys key, KeyStatus status, long time) {
-            Key = key;
-            Status = status;
-            Time = time;
-        }
-        public Keys Key { get; set; }
-        public KeyStatus Status { get; set; }
-        public long Time { get; set; }
-    }
-
-    public static class HIDHook {
+    
+    public static class HID {
         //public static event EventHandler MouseAction = delegate { };
         private const int WH_MOUSE_LL = 14;
         private const int WH_KEYBOARD_LL = 13;
@@ -139,12 +102,7 @@ namespace mr_steve {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        /*
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook,
-        LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        */
+        
+      
     }
-}
+ 

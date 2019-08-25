@@ -34,7 +34,7 @@ public class settings {
 
     public Proccess Proccess { get; set; }
 
-    public List<HID> HID { get; set; }
+    public List<HIDInput> HID { get; set; }
 
     public static void save(settings s, string filePath) {
         string json = JsonConvert.SerializeObject(s );
@@ -48,23 +48,23 @@ public class settings {
 
 
 
-public abstract class HID {
+public abstract class HIDInput {
 
-    public HID() {
+    public HIDInput() {
 
     }
     public long Time { get; set; }
 }
 
 
-public class Mouse : HID {
+public class Mouse : HIDInput {
     public MouseStatus Status { get; set; }
     public int PosX { get; set; }
     public int PosY { get; set; }
 
 }
 
-public class Key : HID {
+public class Key : HIDInput {
     public Keys KeyValue { get; set; }
     public KeyStatus Status { get; set; }
 
@@ -114,9 +114,9 @@ public class LaunchTiming {
 
 
 
-public class HIDConverter : JsonConverter<HID> {
+public class HIDConverter : JsonConverter<HIDInput> {
 
-    public override void WriteJson(JsonWriter writer, HID value, JsonSerializer serializer) {
+    public override void WriteJson(JsonWriter writer, HIDInput value, JsonSerializer serializer) {
         // base.WriteJson(writer, value, serializer);
 
   //      if (value.GetType() == typeof(Mouse))
@@ -131,8 +131,8 @@ public class HIDConverter : JsonConverter<HID> {
 
 
     }
-    public override HID ReadJson(JsonReader reader, Type objectType, HID existingValue, bool hasExistingValue, JsonSerializer serializer) {
-        HID res = null;
+    public override HIDInput ReadJson(JsonReader reader, Type objectType, HIDInput existingValue, bool hasExistingValue, JsonSerializer serializer) {
+        HIDInput res = null;
 
         JObject jObject = JObject.Load(reader);
 
