@@ -30,7 +30,7 @@ namespace mr_steve {
             textBox2.Text = res.httpGet.value;
             //proccess 
             textBox4.Text = res.Proccess.Close;
-            checkBox4.Checked = res.Proccess.isClose;
+            checkBox4.Checked = res.Proccess.Enable;
 
             dataGridView1.Rows.Clear();
 
@@ -78,7 +78,7 @@ namespace mr_steve {
             res.httpGet.Operator = (ComparisonOperator)comboBox1.SelectedIndex;
             res.httpGet.value = textBox2.Text;
             //proccess 
-            res.Proccess.isClose =  checkBox4.Checked ;
+            res.Proccess.Enable =  checkBox4.Checked ;
             res.Proccess.Close = textBox4.Text;
 
             //HID 
@@ -109,7 +109,7 @@ namespace mr_steve {
                 m.Status = (MouseStatus)dv.Rows[row].Cells["status"].Value;
                 temp = m;
             }
-            temp.Time = (int)dv.Rows[row].Cells["time"].Value;
+            temp.Time =int .Parse(dv.Rows[row].Cells["time"].Value.ToString());
             return temp;
         }
     }

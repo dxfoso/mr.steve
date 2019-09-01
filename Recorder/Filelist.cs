@@ -14,14 +14,16 @@ namespace mr_steve {
         private Form1 _form;
 
         public string fileName { get; set; }
+     
         public Filelist(  Form1 form) {
             InitializeComponent();
             _form = form;
             fileName = string.Empty;
+            
         }
 
         private void Filelist_Load(object sender, EventArgs e  ) {
-            DirectoryInfo d = new DirectoryInfo(Form1.getFolder());
+            DirectoryInfo d = new DirectoryInfo(settings.getFolder());
 
             FileInfo[] Files = d.GetFiles("*.mrsteve"); //Getting Text files
             string str = "";

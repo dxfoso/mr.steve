@@ -45,8 +45,8 @@ public class HIDMouseInput : HIDInput {
     public int PosY { get; set; }
     public override void _play() {
          
- 
-        Cursor.Position = new Point(PosX , PosY);
+
+        Cursor.Position = new System.Drawing.Point(PosX , PosY);
 
         switch (Status) {
             case MouseStatus.WM_LBUTTONDOWN:

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +24,9 @@ namespace Service {
 
             WriteToFile("Service is started at " + DateTime.Now);
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 5000; //number in milisecinds  
+            timer.Interval = 300000; //number in milisecinds  
+            timer.Interval = 3000;
+
             timer.Enabled = true;
 
 
@@ -31,27 +34,69 @@ namespace Service {
 
         protected override void OnStop() {
             WriteToFile("Service is stopped at " + DateTime.Now);
-
         }
 
         private void OnElapsedTime(object source, ElapsedEventArgs e) {
             WriteToFile("Service is recall at " + DateTime.Now);
+
+
+            Point PrevMousePos = new Point();
+            DateTime time = DateTime.Now;
+            getPrevSettings(ref PrevMousePos , ref time );
+
+            DirectoryInfo d = new DirectoryInfo(settings.getFolder());
+            FileInfo[] Files = d.GetFiles("*.mrsteve"); //Getting Text files
+    
+            foreach (FileInfo file in Files) {
+                string res = Path.Combine(settings.getFolder(), file.Name);
+                settings s = settings.load(res);
+                s.play(PrevMousePos, time, true );
+                WriteToFile("play" + file.Name);
+            }
+
+            setPrevMousePos(HID.MousePos , DateTime.Now);
         }
 
 
-        public void WriteToFile(string Message) {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+        private void  getPrevSettings(ref  Point   Cur , ref DateTime   time ) {
+
+       
+            string filePath = Path.Combine(settings.getFolder(), "mrsteve_settings.json");
+
+            if ( File.Exists(filePath)) {
+                List<object> data = new List<object>();
+                data =  JsonConvert.DeserializeObject<List<object>>(File.ReadAllText(filePath) );
+
+                Cur =(Point) data[0];
+                time = (DateTime)  data[1];
+
             }
-            string filepath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-            if (!File.Exists(filepath)) {
+         
+
+        }
+        private void  setPrevMousePos(Point Cur, DateTime time) {
+            string filePath = Path.Combine(settings.getFolder(), "mrsteve_settings.json");
+            File.Delete(filePath);
+
+            List<object> data = new List<object>();
+            data.Add(Cur);
+            data.Add(time);
+            string json = JsonConvert.SerializeObject(data);
+            System.IO.File.WriteAllText(filePath, json);
+        }
+
+
+        private string Root { get { return AppDomain.CurrentDomain.BaseDirectory; } }
+
+        public void WriteToFile(string Message) {
+            string filePath = Path.Combine(settings.getFolder(), "mrsteve_log.txt");
+            if (!File.Exists(filePath)) {
                 // Create a file to write to.   
-                using (StreamWriter sw = File.CreateText(filepath)) {
+                using (StreamWriter sw = File.CreateText(filePath)) {
                     sw.WriteLine(Message);
                 }
             } else {
-                using (StreamWriter sw = File.AppendText(filepath)) {
+                using (StreamWriter sw = File.AppendText(filePath)) {
                     sw.WriteLine(Message);
                 }
             }

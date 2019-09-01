@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
+ 
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,7 +10,24 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
+public struct Point {
+    public Point(int x, int y) {
+        X = x;
+        Y = y;
+    }
+    public int X { get; set; }
+    public int Y { get; set; }
 
+    public static bool operator ==(Point lhs, Point rhs) {
+        return lhs.X == rhs.X && lhs.Y == rhs.Y;
+         
+    }
+
+    public static bool operator !=(Point lhs, Point rhs) {
+        return !(lhs == rhs);
+    }
+
+}
 public abstract class HIDInput {
     public HIDInput() { }
     public int  Time { get; set; }
@@ -49,6 +66,15 @@ public static class HID {
         UnhookWindowsHookEx(_hookID_Keyboard);
         stopWatch.Stop();
     }
+    public static Point MousePos {
+        get {
+            Point res = new Point() ;
+            GetCursorPos(ref res);
+            return res;
+        }
+    }
+    [DllImport("user32.dll")]
+    public static extern int GetCursorPos(ref Point lpPoint);
 
     private static LowLevelProc _proc_mouse = HookCallback_Mouse;
     private static LowLevelProc _proc_keyboard = HookCallback_Keyboard;
@@ -75,7 +101,8 @@ public static class HID {
             (MouseStatus)wParam == MouseStatus.WM_RBUTTONDOWN ||
             (MouseStatus)wParam == MouseStatus.WM_RBUTTONUP)) {
             MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-            Point mouse = System.Windows.Forms.Cursor.Position;
+            Point mouse = HID.MousePos;
+         
             MouseAction(null, new MouseEventArgs(new HIDMouseInput((MouseStatus)wParam, mouse.X, mouse.Y,(int) stopWatch.ElapsedMilliseconds)));
             stopWatch.Restart();
         }
@@ -99,7 +126,7 @@ public static class HID {
         public int x;
         public int y;
     }
-
+    
     [StructLayout(LayoutKind.Sequential)]
     private struct MSLLHOOKSTRUCT {
         public POINT pt;

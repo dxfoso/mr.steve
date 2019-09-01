@@ -8,15 +8,19 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.Devices;
 
 namespace mr_steve {
     public partial class Form1 : Form {
-         
+        private Timer timer;
+
+        private Point PrevMousePos;
+        private DateTime PrevMousetime;
+
+
         public Form1() {
             InitializeComponent();
 
@@ -30,7 +34,49 @@ namespace mr_steve {
             dataGridInit();
             HID.MouseAction += MouseHook_MouseAction;
             HID.KeyboardAction += HIDHook_KeyboardAction;
+            PrevMousePos = HID.MousePos;
+            PrevMousetime = DateTime.Now;
+            this.FormClosing += Form1_FormClosing;
+            this.Resize += Form1_Resize;
+            notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += NotifyIcon1_MouseDoubleClick;
+            toolStripMenuItem1.Click += ToolStripMenuItem1_Click;
         }
+        private bool isclose = false;
+        private void ToolStripMenuItem1_Click(object sender, EventArgs e) {
+            isclose = true;
+            this.Close();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+            if (isclose) return;
+            e.Cancel = true;
+            Hide();
+          
+            return ;
+
+          var window = MessageBox.Show(
+       "Close the window?",
+       "Are you sure?",
+       MessageBoxButtons.YesNo);
+
+            e.Cancel = (window == DialogResult.No);
+        }
+
+
+        private void NotifyIcon1_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e) {
+            Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e) {
+            if (this.WindowState == FormWindowState.Minimized) {
+                Hide();
+                notifyIcon1.Visible = true;
+            }
+        }
+
         private void dataGridInit() {
 
             this.dataGridView1.Columns.Add("#", "#");
@@ -85,7 +131,7 @@ namespace mr_steve {
 
             settings s = UI_to_settings();
 
-            string filePath = Path.Combine(getFolder(), textBox5.Text + ".mrsteve");
+            string filePath = Path.Combine(settings.getFolder(), textBox5.Text + ".mrsteve");
 
             if (File.Exists(filePath)) {
 
@@ -110,24 +156,18 @@ namespace mr_steve {
 
         }
 
-      
 
-        public static string getFolder() {
-            string res = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents", "Mr_Steve");
-            if (!File.Exists(res))
-                System.IO.Directory.CreateDirectory(res);
-            return res;
-        }
+
+
 
         private void Form1_Load(object sender, EventArgs e) {
 
-
-            textBox3.Text = getFolder();
+            textBox3.Text = settings.getFolder();
         }
 
         private void Button5_Click(object sender, EventArgs e) {
 
-            Process.Start(getFolder());
+            Process.Start(settings.getFolder());
         }
 
         private void Button4_Click(object sender, EventArgs e) {
@@ -139,17 +179,66 @@ namespace mr_steve {
             //   f.ShowDialog();
             f.ShowDialog();
             if (string.IsNullOrEmpty(f.fileName)) return;
-            string res = Path.Combine(getFolder(), f.fileName);
+            string res = Path.Combine(settings.getFolder(), f.fileName);
             settings s = settings.load(res);
             this.settings_to_UI(s);
+            textBox5.Text = f.fileName.Substring(0, f.fileName.Length - 8);
         }
 
         private void Button6_Click(object sender, EventArgs e) {
             this.WindowState = FormWindowState.Minimized;
             settings s = UI_to_settings();
-            s.play();
+            DateTime t = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute - 1, 0);
+
+
+            bool res = s.play(true);
             this.WindowState = FormWindowState.Normal;
         }
+
+        private void Button5_Click_1(object sender, EventArgs e) {
+            Process.Start(settings.getFolder());
+        }
+
+        private void Button7_Click(object sender, EventArgs e) {
+            Button b = (Button)sender;
+
+            if (b.Text == "Run") {
+
+                play();
+
+
+
+                b.Text = "Stop";
+                this.WindowState = FormWindowState.Minimized;
+            } else if (b.Text == "Stop") {
+                b.Text = "Run";
+                set = new List<settings>();
+            }
+
+        }
+        private List<settings> set;
+        private void play() {
+            set = new List<settings>();
+
+
+            DirectoryInfo d = new DirectoryInfo(settings.getFolder());
+            FileInfo[] Files = d.GetFiles("*.mrsteve"); //Getting Text files
+
+            foreach (FileInfo file in Files) {
+                string res = Path.Combine(settings.getFolder(), file.Name);
+                settings s = settings.load(res);
+                s.play(false);
+                set.Add(s);
+            }
+
+            /*
+             if (PrevMousePos != HID.MousePos) {
+                 PrevMousePos = HID.MousePos;
+                 PrevMousetime = DateTime.Now;
+             }*/
+        }
+
+
 
     }
 }
