@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 public class settings {
     
-    private Timer timer;
+    public  Timer timer;
 
     public settings() {
         timer = new Timer();
@@ -22,7 +22,7 @@ public class settings {
         //sleep 
         Launch.Sleep = new LaunchSleep();
         //time
-        Launch.Timing = new LaunchTiming();
+        Launch.Timing = new LaunchTiming( );
         //http 
         httpGet = new httpGET();
         //proccess 
@@ -48,7 +48,7 @@ public class settings {
     }
 
     public bool play(bool PlayNow = true) {
-      
+        
         if (!PlayNow) {
             Launch.Sleep.reset();
             timer.Interval = Launch.Sleep.Minutes * 60 * 1000;
@@ -155,7 +155,7 @@ public class Launch {
 
     public bool Play(int span) {
         bool b1 = Sleep.Play(span);
-        bool b2 = Timing.Play();
+        bool b2 = Timing.Play(span);
         return b1 || b2;
     }
 }
@@ -213,22 +213,27 @@ public class LaunchTiming {
     public int Hour { get; set; }
     public int Minute { get; set; }
     public int Second { get; set; }
-
+    
+    public LaunchTiming( ) {
+        
+     
+    }
     public DateTime DateTime {
         get {
             DateTime n = DateTime.Now;
             return new DateTime(n.Year, n.Month, n.Day, Hour, Minute, Second);
         }
     }
-    public bool Play( ) {
+    public bool Play(int span) {
         if (!Enable) return false;
         DateTime s = this.DateTime;
 
 
-        return false;
-        TimeSpan span = DateTime.Now.Subtract(s);
+      
+       TimeSpan ss = DateTime.Now.Subtract(s);
        
-      //  if (totalMinutes <= settings.Interval && totalMinutes >= 0) return true;
+       if (ss.TotalMilliseconds <= span && DateTime.Now > s )
+            return true;
         return false;
     }
 }

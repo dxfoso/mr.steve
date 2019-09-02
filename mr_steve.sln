@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{E16DA9A3-B2E8-4DEF-BC94-6D2950B090FA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recorder", "Recorder\Recorder.csproj", "{CB9F5C62-5D6A-4231-A9F9-408AEA42B06F}"
 EndProject
 Global
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E16DA9A3-B2E8-4DEF-BC94-6D2950B090FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E16DA9A3-B2E8-4DEF-BC94-6D2950B090FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E16DA9A3-B2E8-4DEF-BC94-6D2950B090FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E16DA9A3-B2E8-4DEF-BC94-6D2950B090FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB9F5C62-5D6A-4231-A9F9-408AEA42B06F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB9F5C62-5D6A-4231-A9F9-408AEA42B06F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB9F5C62-5D6A-4231-A9F9-408AEA42B06F}.Release|Any CPU.ActiveCfg = Release|Any CPU
